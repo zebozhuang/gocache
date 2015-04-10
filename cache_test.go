@@ -2,10 +2,13 @@ package cache
 
 import (
 	"testing"
-	"time"
 )
 
 func Test_Time(t *testing.T) {
-	var d time.Duration
-	println(d)
+
+}
+
+func Test_NewCache(t *testing.T) {
+    c := NewCache(DefaultExpiration)
+    c.Set("k123", "v123", DefaultExpiration)  
 }
