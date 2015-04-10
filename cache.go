@@ -1,7 +1,7 @@
 package cache
 
 import (
-//	"fmt"
+	//	"fmt"
 	"sync"
 	"time"
 )
@@ -59,5 +59,9 @@ func (c *cache) Incr(key string) error {
 }
 
 func NewCache(defaultExpiration time.Duration) *cache {
-	return new(cache)
+	c := new(cache)
+	c.items = map[string]*Item{}
+	c.defaultExpiration = DefaultExpiration
+
+	return c
 }
