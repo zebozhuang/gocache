@@ -61,7 +61,3 @@ func (c *cache) Incr(key string) error {
 func NewCache(defaultExpiration time.Duration) *cache {
 	return new(cache)
 }
-
-func main() {
-	fmt.Println("Hello World")
-}
