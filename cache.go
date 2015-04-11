@@ -96,6 +96,69 @@ func (c *cache) get(key string) (*Item, error) {
 	return v, nil
 }
 
+func (c *cache) Expire(key string, delta time.Duration) error {
+	c.Lock()
+	item, ok := c.items[key]
+
+	if !ok {
+		c.Unlock()
+		return errors.New(fmt.Sprintf("key %s does not exist.", key))
+	}
+
+	if item.Expired() {
+		c.Unlock()
+		return errors.New(fmt.Sprintf("key %s has expired.", key))
+	}
+
+	item.Expiration.Add(-delta)
+	c.Unlock()
+	return nil
+}
+
+func (c *cache) ExpireAt(key string, expire *time.Time) error {
+	c.Lock()
+	item, ok := c.items[key]
+
+	if !ok {
+		c.Unlock()
+		return errors.New(fmt.Sprintf("key %s does not exist.", key))
+	}
+
+	if item.Expired() {
+		c.Unlock()
+		return errors.New(fmt.Sprintf("key %s has expired.", key))
+	}
+
+	item.Expiration = expire
+	c.Unlock()
+	return nil
+}
+
+func (c *cache) Decr(key string) (int64, error) {
+	return c.DecrBy(key, 1)
+}
+
+func (c *cache) DecrBy(key string, delta int64) (int64, error) {
+	c.Lock()
+	item, ok := c.items[key]
+
+	if !ok || item.Expired() { // key does not exist or has expired.
+		c.set(key, -delta, NoExpiration)
+		c.Unlock()
+		return -delta, nil
+	}
+
+	value, ok := item.Value.(int64)
+	if !ok {
+		return 0, errors.New(fmt.Sprintf("key %s's value is not integer.", key))
+	}
+
+	newValue := value - delta
+	item.Value = newValue
+	c.Unlock()
+	return newValue, nil
+}
+
 func NewCache() *cache {
 	c := new(cache)
 	c.items = map[string]*Item{}
