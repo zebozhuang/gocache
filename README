@@ -8,8 +8,8 @@
 - [x] DecrBy
 - [x] Get
 - [x] Set
-- [] Exists
+- [ ] Exists
 - [x] Expire
 - [x] ExpireAt
-- [] BitCount
-- [] ...
+- [ ] BitCount
+- [ ] ...
