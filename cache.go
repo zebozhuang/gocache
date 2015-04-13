@@ -161,6 +161,41 @@ func (c *cache) DecrBy(key string, delta int64) (int64, error) {
 	return newValue, nil
 }
 
+func (c *cache) Exists(key string) bool {
+	c.RLock()
+	item, ok := c.items[key]
+	if !ok || item.Expired() {
+		c.RUnlock()
+		return false
+	}
+	c.RUnlock()
+	return true
+}
+
+func (c *cache) Append(key, value string) (int64, error) {
+	c.Lock()
+	item, ok := c.items[key]
+	if !ok {
+		c.set(key, value, NoExpiration)
+		c.Unlock()
+		return int64(len(value)), nil
+	}
+
+	if item.Expired() {
+		return 0, errors.New(fmt.Sprintf("key %s has expired.", key))
+	}
+
+	v, ok := item.Value.(string)
+	if !ok {
+		return 0, errors.New(fmt.Sprintf("key %s is not string type.", key))
+	}
+	v += value
+	item.Value = v
+
+	c.Unlock()
+	return int64(len(v)), nil
+}
+
 func NewCache() *cache {
 	c := new(cache)
 	c.items = map[string]*Item{}

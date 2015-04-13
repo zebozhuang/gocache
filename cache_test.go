@@ -113,3 +113,28 @@ func Test_ExpireAt(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+
+func Test_Append(t *testing.T) {
+	c := NewCache()
+	k := "q6"
+	v := "hello "
+	_, err := c.Append(k, v)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_, err = c.Append(k, "world")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_v, err := c.Get(k)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	v, _ = _v.(string)
+	if v != "hello world" {
+		t.Fatal("fail to append string")
+	}
+}
