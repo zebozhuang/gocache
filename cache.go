@@ -196,6 +196,21 @@ func (c *cache) Append(key, value string) (int64, error) {
 	return int64(len(v)), nil
 }
 
+func (c *cache) Del(key string) bool {
+	c.Lock()
+	item, ok := c.items[key]
+	if !ok {
+		return false
+	}
+	if item.Expired() {
+		delete(c.items, key)
+		return false
+	}
+	delete(c.items, key)
+	c.Unlock()
+	return true
+}
+
 func NewCache() *cache {
 	c := new(cache)
 	c.items = map[string]*Item{}
