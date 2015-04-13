@@ -1,6 +1,6 @@
-###This is a memory cache written by golang.
+###1.This is a memory cache written by golang.
 
-###Supported api
+###2.Supported api
 
 - [x] Incr
 - [x] IncrBy
@@ -8,8 +8,9 @@
 - [x] DecrBy
 - [x] Get
 - [x] Set
-- [ ] Exists
+- [x] Exists
 - [x] Expire
 - [x] ExpireAt
+- [x] Append
 - [ ] BitCount
 - [ ] ...
