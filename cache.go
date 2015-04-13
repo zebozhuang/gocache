@@ -110,7 +110,9 @@ func (c *cache) Expire(key string, delta time.Duration) error {
 		return errors.New(fmt.Sprintf("key %s has expired.", key))
 	}
 
-	item.Expiration.Add(-delta)
+	e := time.Now().Add(delta)
+	item.Expiration = &e
+
 	c.Unlock()
 	return nil
 }

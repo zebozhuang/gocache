@@ -76,3 +76,40 @@ func Test_IncrBy(t *testing.T) {
 		t.Fatal("incrby err: %d != 30", v)
 	}
 }
+
+func Test_Expire(t *testing.T) {
+	c := NewCache()
+	k := "q4"
+	v := 11
+
+	c.Set(k, v, NoExpiration)
+	if err := c.Expire(k, 10*time.Second); err != nil {
+		t.Fatal(err)
+	}
+
+	time.Sleep(11 * time.Second)
+
+	_, err := c.Get(k)
+	if err == nil {
+		t.Fatal("fail to test expire")
+	}
+}
+
+func Test_ExpireAt(t *testing.T) {
+	c := NewCache()
+	k := "q5"
+	v := 12
+
+	c.Set(k, v, NoExpiration)
+
+	e := time.Now().Add(10 * time.Second)
+	if err := c.ExpireAt(k, &e); err != nil {
+		t.Fatal(err)
+	}
+
+	time.Sleep(10 * time.Second)
+	_, err := c.Get(k)
+	if err == nil {
+		t.Fatal(err)
+	}
+}
