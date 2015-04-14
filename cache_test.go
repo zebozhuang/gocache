@@ -138,3 +138,17 @@ func Test_Append(t *testing.T) {
 		t.Fatal("fail to append string")
 	}
 }
+
+func Test_Del(t *testing.T) {
+	c := NewCache()
+	k := "q7"
+	v := 7
+
+	c.Set(k, v, NoExpiration)
+	c.Del(k)
+
+	_, err := c.Get(k)
+	if err == nil {
+		t.Fatal("Fail to test del")
+	}
+}
