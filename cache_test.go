@@ -152,3 +152,16 @@ func Test_Del(t *testing.T) {
 		t.Fatal("Fail to test del")
 	}
 }
+
+func Test_IncrByFloat(t *testing.T) {
+	c := NewCache()
+	k := "abc"
+
+	v, err := c.IncrByFloat(k, 90)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if v != 90 {
+		t.Fatal(v)
+	}
+}

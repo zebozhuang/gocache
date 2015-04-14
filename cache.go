@@ -152,7 +152,51 @@ func (c *cache) DecrBy(key string, delta int64) (int64, error) {
 
 	value, ok := item.Value.(int64)
 	if !ok {
+		c.Unlock()
 		return 0, errors.New(fmt.Sprintf("key %s's value is not integer.", key))
+	}
+
+	newValue := value - delta
+	item.Value = newValue
+	c.Unlock()
+	return newValue, nil
+}
+
+func (c *cache) IncrByFloat(key string, delta float64) (float64, error) {
+	c.Lock()
+	item, ok := c.items[key]
+
+	if !ok || item.Expired() {
+		c.set(key, delta, NoExpiration)
+		c.Unlock()
+		return delta, nil
+	}
+
+	value, ok := item.Value.(float64)
+	if !ok {
+		c.Unlock()
+		return 0, errors.New(fmt.Sprintf("key %s's value is not float64 type.", key))
+	}
+	newValue := value + delta
+	item.Value = newValue
+	c.Unlock()
+	return newValue, nil
+}
+
+func (c *cache) DecrByFloat(key string, delta float64) (float64, error) {
+	c.Lock()
+	item, ok := c.items[key]
+
+	if !ok || item.Expired() {
+		c.set(key, -delta, NoExpiration)
+		c.Unlock()
+		return -delta, nil
+	}
+
+	value, ok := item.Value.(float64)
+	if !ok {
+		c.Unlock()
+		return 0, errors.New(fmt.Sprintf("key %s's value is not float64 type.", key))
 	}
 
 	newValue := value - delta
